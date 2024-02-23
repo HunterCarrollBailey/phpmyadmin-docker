@@ -1,0 +1,33 @@
+version: "3.7"
+services: 
+    database:
+        image: mysql:8.0
+        container_name: mysql
+        restart: unless-stopped
+        expose:
+            - '3306:3306'
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        volumes:
+            - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+        networks:
+            - docker
+    phpmyadmin:
+        image: phpmyadmin
+        container_name: myadmin
+        restart: unless-stopped
+        environment:
+            PMA_HOST: database
+            PMA_PORT: 3306
+        ports:
+            - 8080:80
+        networks:
+            - docker
+networks:
+  docker:
+      driver: bridge
